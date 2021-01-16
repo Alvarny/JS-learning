@@ -59,4 +59,14 @@ ${billsPlusTips}`);
 
 
 // Exercise 3: object methods
+
 // Exercise 4: loops
+const bills = [125, 555, 44];
+const tips = [];
+const totals = [];
+
+for (let i = 0; i < bills.length; i++) {
+    const tip = calcTip(bills[i]);
+    tips.push(tip);
+    totals.push(tip + bills[i]);
+}
