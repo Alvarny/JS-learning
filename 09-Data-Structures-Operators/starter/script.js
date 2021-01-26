@@ -24,7 +24,7 @@ const restaurant = {
 };
 
 
-// Data for challenge 1
+// Data for challenges
 const game = {
   team1: 'Bayern Munich',
   team2: 'Borrussia Dortmund',
@@ -65,6 +65,20 @@ const game = {
     team2: 6.5,
   },
 };
+
+const gameEvents = new Map([
+  [17, '⚽️ GOAL'],
+  [36, '🔁 Substitution'],
+  [47, '⚽️ GOAL'],
+  [61, '🔁 Substitution'],
+  [64, '🔶 Yellow card'],
+  [69, '🔴 Red card'],
+  [70, '🔁 Substitution'],
+  [72, '🔁 Substitution'],
+  [76, '⚽️ GOAL'],
+  [80, '⚽️ GOAL'],
+  [92, '🔶 Yellow card'],
+]);
 
 // Challenge 1
 /*
@@ -165,3 +179,91 @@ const scorers = {};
 for (const player of game.scored) {
   scorers[player] ? scorers[player]++ : (scorers[player] = 1);
 }
+
+
+// Coding challenge 3
+/*
+1. Create an array 'events' of the different game events that happened (no duplicates)
+2. After the game has finished, is was found that the yellow card from minute 64 was unfair. So remove this event from the game events log.
+3. Print the following string to the console: "An event happened, on average, every 9 minutes" (keep in mind that a game has 90 minutes)
+4. Loop over the events and log them to the console, marking whether it's in the first half or second half (after 45 min) of the game, like this:
+      [FIRST HALF] 17: ⚽️ GOAL
+*/
+
+// 1. Map to set to array
+const events = [...new Set(gameEvents.values())];
+console.log(events);
+
+// 2. Remove an event
+gameEvents.delete(64);
+
+// 3. Get average event value
+let priorValue = 0, average = 0;
+for (const [minute, event] of gameEvents) {
+
+  let difference = minute - priorValue;
+  average += difference;
+
+  priorValue = minute;
+}
+average /= gameEvents.size;
+console.log(average);
+
+// 4. 
+for (const [minute, event] of gameEvents) {
+
+  let half = minute <= 45 ? `FIRST` : `SECOND`;
+  let str = `[${half} HALF] ${minute}: ${event}`;
+
+  console.log(str);
+}
+
+
+const email = 'hello@jonas.io';
+const loginEmail = '    Hello@Jonas.Io \n';
+const lowerEmail = loginEmail.toLowerCase().trim();
+console.log(lowerEmail);
+
+
+// Coding challenge 4
+/* 
+Write a program that receives a list of variable names written in underscore_case and convert them to camelCase.
+
+The input will come from a textarea inserted into the DOM (see code below), and conversion will happen when the button is pressed.
+
+THIS TEST DATA (pasted to textarea)
+underscore_case
+ first_name
+Some_Variable 
+  calculate_AGE
+delayed_departure
+
+SHOULD PRODUCE THIS OUTPUT (5 separate console.log outputs)
+underscoreCase      ✅
+firstName           ✅✅
+someVariable        ✅✅✅
+calculateAge        ✅✅✅✅
+delayedDeparture    ✅✅✅✅✅
+
+HINT 1: Remember which character defines a new line in the textarea 😉
+HINT 2: The solution only needs to work for a variable made out of 2 words, like a_b
+HINT 3: Start without worrying about the ✅. Tackle that only after you have the variable name conversion working 😉
+HINT 4: This challenge is difficult on purpose, so start watching the solution in case you're stuck. Then pause and continue!
+*/
+
+const convertToCamel = function (...vnames) {
+
+  // Iterate over them
+  for (const vname of vnames) {
+
+    // Transform variable name
+    let [vname1, vname2] = vname.toLowerCase().trim().split('_');
+    let vnameConverted = `${vname1}${vname2[0].toUpperCase()}${vname2.slice(1)}`;
+
+    // Log
+    console.log(vnameConverted);
+
+  }
+}
+
+convertToCamel('underscore_case', 'first_name', 'Some_Variable', '  calculate_AGE', 'delayed_departure');
