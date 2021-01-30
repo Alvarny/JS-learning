@@ -102,6 +102,31 @@ const calcPrintBalance = function (movements) {
 };
 calcPrintBalance(account1.movements);
 
+// Calculate statistics
+const calcDisplaySummary = function (movements) {
+
+	// Income
+	const income = movements.filter(mov => mov > 0)
+		.reduce((acc, mov) => acc + mov, 0);
+
+	labelSumIn.textContent = `${income}€`;
+
+	// Spending
+	const spending = movements.filter(mov => mov < 0)
+		.reduce((acc, mov) => acc + mov, 0);
+
+	labelSumOut.textContent = `${Math.abs(spending)}€`;
+
+	// Interest
+	const interest = movements.filter(mov => mov > 0)
+		.map(deposit => deposit * 1.2 / 100)
+		.filter(interest => interest > 1) // Bank only grants interest if interest is greater than 1€
+		.reduce((acc, mov) => acc + mov, 0);
+	labelSumInterest.textContent = `${interest}€`;
+
+}
+calcDisplaySummary(account1.movements);
+
 /////////////////////////////////////////////////
 /////////////////////////////////////////////////
 // LECTURES
@@ -111,6 +136,9 @@ const currencies = new Map([
 	['EUR', 'Euro'],
 	['GBP', 'Pound sterling'],
 ]);
+
+// Find an account
+const account = accounts.find(acc => acc.owner === 'Jessica Davis');
 
 ///////////////////////////////////////////////// Challenges
 
@@ -225,3 +253,9 @@ const calcAverageHumanAge = function (ages) {
 
 }
 calcAverageHumanAge(arr1);
+
+// 3. coding challenge
+const calcAverageHumanAge_arrow = (ages) => ages.map((dogAge) => dogAge <= 2 ? (2 * dogAge) : (16 + dogAge * 4))
+	.filter((dog) => dog >= 18)
+	.reduce((avg, cur, i, arr) => (avg + cur / (arr.length)), 0);
+console.log(calcAverageHumanAge_arrow(arr1));
