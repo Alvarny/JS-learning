@@ -5,6 +5,8 @@
 // BANKIST APP
 
 // Data
+const movements = [200, 450, -400, 3000, -650, -130, 70, 1300];
+
 const account1 = {
 	owner: 'Jonas Schmedtmann',
 	movements: [200, 450, -400, 3000, -650, -130, 70, 1300],
@@ -90,6 +92,28 @@ const displayMovements = function (movements) {
 }
 displayMovements(account1.movements);
 
+// Compute user names (map)
+const createUsernames = function (accounts) {
+
+	accounts.forEach((acc) => {
+
+		acc.username = acc.owner.toLowerCase()
+			.split(' ')
+			.map((name) => name[0])
+			.join('');
+
+	})
+};
+createUsernames(accounts);
+console.log(accounts);
+
+// Filter deposits out of movements (movement > 0) (filter)
+const deposits = movements.filter((mov) => mov > 0);
+const withdrawals = movements.filter((mov) => mov < 0);
+
+// Calculate global value of account (reduce)
+const balance = movements.reduce((acc, cur, i, arr) => acc + cur, 0);
+
 // Calculate balance
 const calcPrintBalance = function (movements) {
 
@@ -126,6 +150,23 @@ const calcDisplaySummary = function (movements) {
 
 }
 calcDisplaySummary(account1.movements);
+
+// Login functionality
+let currentAccount;
+btnLogin.addEventListener('click', (e) => {
+
+	// Prevent page from reloading
+	e.preventDefault();
+
+	// Find account to the user input
+	currentAccount = accounts.find(acc => acc.username === inputLoginUsername.value);
+
+	// Check if pin is correct
+	if (currentAccount?.pin === Number(inputLoginPin.value)) {
+
+	}
+
+});
 
 /////////////////////////////////////////////////
 /////////////////////////////////////////////////
@@ -187,33 +228,10 @@ const checkDogs = function (dogsJulia, dogsKate) {
 //checkDogs(julia1, kate1);
 
 //////////// Data transformations
-const movements = [200, 450, -400, 3000, -650, -130, 70, 1300];
 
 const eurToUsd = 1.1;
 
 const movementsUSD = movements.map((mov) => mov * eurToUsd);
-
-// Compute user names (map)
-const createUsernames = function (accounts) {
-
-	accounts.forEach((acc) => {
-
-		acc.username = acc.owner.toLowerCase()
-			.split(' ')
-			.map((name) => name[0])
-			.join('');
-
-	})
-};
-createUsernames(accounts);
-
-// Filter deposits out of movements (movement > 0) (filter)
-const deposits = movements.filter((mov) => mov > 0);
-const withdrawals = movements.filter((mov) => mov < 0);
-
-// Calculate global value of account (reduce)
-const balance = movements.reduce((acc, cur, i, arr) => acc + cur, 0);
-console.log(balance);
 
 /*
 Challenge #2
