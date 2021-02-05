@@ -90,7 +90,6 @@ const displayMovements = function (movements) {
 	});
 
 }
-displayMovements(account1.movements);
 
 // Compute user names (map)
 const createUsernames = function (accounts) {
@@ -115,44 +114,42 @@ const withdrawals = movements.filter((mov) => mov < 0);
 const balance = movements.reduce((acc, cur, i, arr) => acc + cur, 0);
 
 // Calculate balance
-const calcPrintBalance = function (movements) {
+const calcDisplayBalance = function (acc) {
 
 	// Calculate balance
-	const balance = movements.reduce((acc, value) => acc + value, 0);
+	acc.balance = acc.movements.reduce((acc, value) => acc + value, 0);
 
 	// Show balance
-	labelBalance.textContent = `${balance}€`;
+	labelBalance.textContent = `${acc.balance}€`;
 
 };
-calcPrintBalance(account1.movements);
 
 // Calculate statistics
-const calcDisplaySummary = function (movements) {
+const calcDisplaySummary = function (acc) {
 
 	// Income
-	const income = movements.filter(mov => mov > 0)
+	const income = acc.movements.filter(mov => mov > 0)
 		.reduce((acc, mov) => acc + mov, 0);
 
 	labelSumIn.textContent = `${income}€`;
 
 	// Spending
-	const spending = movements.filter(mov => mov < 0)
+	const spending = acc.movements.filter(mov => mov < 0)
 		.reduce((acc, mov) => acc + mov, 0);
 
 	labelSumOut.textContent = `${Math.abs(spending)}€`;
 
 	// Interest
-	const interest = movements.filter(mov => mov > 0)
-		.map(deposit => deposit * 1.2 / 100)
+	const interest = acc.movements.filter(mov => mov > 0)
+		.map(deposit => deposit * acc.interestRate / 100)
 		.filter(interest => interest > 1) // Bank only grants interest if interest is greater than 1€
 		.reduce((acc, mov) => acc + mov, 0);
 	labelSumInterest.textContent = `${interest}€`;
 
 }
-calcDisplaySummary(account1.movements);
 
 // Login functionality
-let currentAccount;
+let currentAccount; // Global so that it is accessible from anywhere
 btnLogin.addEventListener('click', (e) => {
 
 	// Prevent page from reloading
@@ -164,9 +161,61 @@ btnLogin.addEventListener('click', (e) => {
 	// Check if pin is correct
 	if (currentAccount?.pin === Number(inputLoginPin.value)) {
 
+		// Display UI and welcome message
+		labelWelcome.textContent = `Welcome back, ${currentAccount.owner.split(' ')[0]}`;
+		containerApp.style.opacity = 100;
+
+		// Clear input fields
+		inputLoginUsername.value = inputLoginPin.value = "";
+		inputLoginPin.blur()
+
+		// Update UI
+		updateUI(currentAccount)
+
 	}
 
 });
+
+// Update helper
+const updateUI = function(currentAccount) {
+	// Display movements
+	displayMovements(currentAccount.movements)
+
+	// Display balance
+	calcDisplayBalance(currentAccount)
+
+	// Display summary
+	calcDisplaySummary(currentAccount)
+}
+
+// Transfer functionality
+btnTransfer.addEventListener('click', (e) => {
+	
+	// Prevent site reload
+	e.preventDefault();
+
+	// Get inputs
+	const amount = Number(inputTransferAmount.value);
+	const receiverAcc = accounts.find(acc => acc.username === inputTransferTo.value);
+
+	// Reset inputs
+	inputTransferTo = inputTransferAmount = ""
+
+	// Check value
+	if(receiverAcc && amount > 0 && currentAccount.balance >= amount && receiverAcc?.username !== currentAccount.username) {
+
+		// Deduct fom sender
+		currentAccount.movements.push(-amount);
+		
+		// Add to recipient
+		receiverAcc.movements.push(amount);
+
+		// Update UI
+		updateUI(currentAccount)
+
+	}
+
+})
 
 /////////////////////////////////////////////////
 /////////////////////////////////////////////////
